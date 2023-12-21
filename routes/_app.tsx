@@ -8,7 +8,7 @@ export default function App({ Component }: PageProps) {
         <title>simple_clock</title>
         <link rel="stylesheet" href="/styles.css" />
       </head>
-      <body class="h-full bg-[#2E2E2E]">
+      <body class="h-full bg-[#131313]">
         <Component />
       </body>
     </html>

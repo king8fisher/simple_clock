@@ -1,7 +1,7 @@
 import { assert } from "$std/assert/assert.ts";
 import { cl } from "cl";
 import { JSX } from "preact";
-import { useEffect, useRef, useState } from "preact/hooks";
+import { useEffect, useMemo, useRef, useState } from "preact/hooks";
 
 export function Clock(props: JSX.HTMLAttributes<HTMLButtonElement>) {
   const [time, setTime] = useState(new Date());
@@ -22,7 +22,7 @@ export function Clock(props: JSX.HTMLAttributes<HTMLButtonElement>) {
     const ticksH = 20;
     const ticksV = (ticks - ticksH * 2) / 2;
 
-    const size = Math.min(rect.width / (ticksH), rect.height / (ticksV)) * 0.9;
+    const size = Math.min(rect.width / ticksH, rect.height / ticksV) * 0.9;
 
     assert(ticksV > 0);
     return (
@@ -78,10 +78,10 @@ export function Clock(props: JSX.HTMLAttributes<HTMLButtonElement>) {
               >
                 <span
                   class={cl(
-                    "flex absolute items-center justify-center font-bold text-[#FFE8B7]",
+                    "flex absolute items-center justify-center font-bold text-black",
                     "w-[90%] h-[90%] rounded-md",
                     sec <= time.getSeconds()
-                      ? "bg-[#767676] shadow-lg"
+                      ? "bg-[#cecece] shadow-lg"
                       : "bg-[#454545]",
                   )}
                 >
@@ -95,12 +95,20 @@ export function Clock(props: JSX.HTMLAttributes<HTMLButtonElement>) {
     );
   };
 
+  const hours = useMemo(() => {
+    const h = time.getHours();
+    if (h > 12) {
+      return (h - 12).toString();
+    }
+    return h.toString();
+  }, [time]);
+
   return (
     <div class="flex flex-col h-full text-center justify-center relative">
-      <div class="text-[calc(min(30vw,70vh))] text-[#FFE8B7] leading-none font-bold">
-        <span>{time.getHours().toString()}</span>
-        <span class="opacity-25">:</span>
-        <span>{time.getMinutes().toString().padStart(2, "0")}</span>
+      <div class="text-[#FFE8B7] leading-none font-bold flex items-center justify-center w-full">
+        <div class="text-[calc(min(35vw,70vh))] flex-[1] text-right inline-block">{hours}</div>
+        <div class="text-[calc(min(30vw,70vh))] opacity-25 inline-block">:</div>
+        <div class="text-[calc(min(35vw,70vh))] flex-[1] text-left inline-block">{time.getMinutes().toString().padStart(2, "0")}</div>
       </div>
       <div
         ref={secondsRef}
